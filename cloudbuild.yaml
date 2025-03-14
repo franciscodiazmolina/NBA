@@ -1,7 +1,15 @@
 steps:
-  - name: 'gcr.io/cloud-builders/git'
-    args: ['clone', '--single-branch', '--branch', 'main', 'https://github.com/franciscodiazmolina/NBA', '.']
+  # ... tus pasos de compilación ...
+images: ['gcr.io/$PROJECT_ID/your-image-name']
+logsBucket: 'gs://prueba'
 
+steps:
+  # ... tus pasos de compilación ...
+images: ['gcr.io/$PROJECT_ID/your-image-name']
+options:
+  defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
+
+  
   - name: 'ubuntu'
     entrypoint: 'bash'
     args:

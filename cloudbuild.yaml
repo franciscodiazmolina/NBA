@@ -8,8 +8,6 @@ steps:
 images: ['gcr.io/$PROJECT_ID/your-image-name']
 options:
   defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
-
-  
   - name: 'ubuntu'
     entrypoint: 'bash'
     args:

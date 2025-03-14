@@ -1,5 +1,5 @@
 options:
-  logging: REGIONAL_USER_OWNED_BUCKET
+  logging: CLOUD_LOGGING_ONLY  # Usar solo Cloud Logging
 steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/$PROJECT_ID/your-image-name', '.']

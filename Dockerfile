@@ -1,14 +1,20 @@
-# Usar una imagen base de Python
-FROM python:3.11
+# Usa una imagen base de Python
+FROM python:3.9-slim
 
-# Establecer el directorio de trabajo en el contenedor
+# Establece el directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# Copiar los archivos de tu proyecto a /app
-COPY . .
+# Copia el archivo de requisitos
+COPY requirements.txt .
 
-# Instalar las dependencias
+# Instala las dependencias
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Comando para ejecutar el script
+# Copia el código fuente
+COPY . .
+
+# Expón el puerto en el que el contenedor escuchará
+EXPOSE 8080
+
+# Establece el comando para ejecutar el script de Python
 CMD ["python", "tu_script.py"]

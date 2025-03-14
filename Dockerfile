@@ -10,11 +10,11 @@ COPY requirements.txt .
 # Instala las dependencias
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copia el código fuente
+# Copia el código fuente del directorio local al contenedor
 COPY . .
 
 # Expón el puerto en el que el contenedor escuchará
 EXPOSE 8080
 
 # Establece el comando para ejecutar el script de Python
-CMD ["python", "tu_script.py"]
+CMD ["python", "utiliti.py"]

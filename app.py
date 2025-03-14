@@ -1,36 +1,65 @@
-from flask import Flask, jsonify, request
 import pandas as pd
 import pymssql
-import pyodbc
-from sqlalchemy import create_engine
-import numpy as np
-import zipfile
 import os
-import time
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from webdriver_manager.chrome import ChromeDriverManager
+import zipfile
+from sqlalchemy import create_engine
 
-app = Flask(__name__)
+# Configurar conexión a SQL Server
+server = 'server-sql-grupo1.database.windows.net'
+database = 'NBA'
+username = 'Admon'
+password = 'Password.Server1'
 
-@app.route('/process', methods=['GET'])
+# Crear el engine usando pymssql
+connection_string = f"mssql+pymssql://{username}:{password}@{server}/{database}"
+engine = create_engine(connection_string)
+
+# Función para procesar datos
 def process_data():
-    try:
-        # Aquí va el código de procesamiento (de tu script)
-        # El código para leer los datos y hacer la limpieza, etc.
-        
-        # Ejemplo de la limpieza y lectura de los datos:
-        df_game = pd.read_csv("basketball_data/csv/game.csv")
-        df_team_details = pd.read_csv('basketball_data/csv/team_details.csv')
+    # Montar Google Drive (si es necesario, omitir en Docker)
+    # kaggle_json_path = "/content/drive/My Drive/Proyecto Final/kaggle.json"
+    # os.makedirs("/root/.kaggle", exist_ok=True)
+    # !mv kaggle.json /root/.kaggle/
+    # !chmod 600 /root/.kaggle/kaggle.json
 
-        # Código de limpieza aquí (lo que ya tienes en tu script)
-        
-        # Simulando el proceso:
-        return jsonify({"message": "Data processed successfully!"}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    # Descargar el dataset de Kaggle
+    os.system('kaggle datasets download -d wyattowalsh/basketball')
 
-if __name__ == '__main__':
-    app.run(debug=True, host="0.0.0.0", port=8080)
+    # Extraer los archivos en una carpeta llamada "basketball_data"
+    with zipfile.ZipFile("basketball.zip", "r") as zip_ref:
+        zip_ref.extractall("basketball_data")
+
+    # Leer los archivos CSV
+    df_game = pd.read_csv("basketball_data/csv/game.csv")
+    df_team_details = pd.read_csv('basketball_data/csv/team_details.csv')
+    df_other_stats = pd.read_csv('basketball_data/csv/other_stats.csv')
+    df_line = pd.read_csv('basketball_data/csv/line_score.csv')
+    df_common_player = pd.read_csv('basketball_data/csv/common_player_info.csv')
+    df_draft_history = pd.read_csv('basketball_data/csv/draft_history.csv')
+    df_game_info = pd.read_csv('basketball_data/csv/game_info.csv')
+    df_play_by_play = pd.read_csv('basketball_data/csv/play_by_play.csv')
+
+    # Aquí va el resto del procesamiento de datos que proporcionaste
+    # (eliminar columnas, renombrar, filtrar, etc.)
+
+    # Guardar los DataFrames procesados en CSV
+    df_game.to_csv('df_game.csv', index=False)
+    df_team_details.to_csv('df_team_details.csv', index=False)
+    df_other_stats.to_csv('df_other_stats.csv', index=False)
+    df_line.to_csv('df_line.csv', index=False)
+    df_common_player.to_csv('df_common_player.csv', index=False)
+    df_draft_history.to_csv('df_draft_history.csv', index=False)
+    df_game_info.to_csv('df_game_info.csv', index=False)
+
+    # Cargar los DataFrames en la base de datos
+    dfs_to_load = {
+        'df_team_details': df_team_details,
+        # Agregar otros DataFrames si es necesario
+    }
+
+    for table_name, df in dfs_to_load.items():
+        df.to_sql(table_name, con=engine, if_exists='replace', index=False)
+        print(f"Tabla '{table_name}' cargada correctamente.")
+
+if __name__ == "__main__":
+    process_data()

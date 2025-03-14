@@ -1,6 +1,6 @@
 steps:
   - name: 'gcr.io/cloud-builders/git'
-    args: ['clone', 'https://github.com/franciscodiazmolina/NBA', '.']
+    args: ['clone', '--single-branch', '--branch', 'main', 'https://github.com/franciscodiazmolina/NBA', '.']
 
   - name: 'ubuntu'
     entrypoint: 'bash'
@@ -10,3 +10,5 @@ steps:
 
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/$PROJECT_ID/your-image-name', '.']
+
+images: ['gcr.io/$PROJECT_ID/your-image-name']

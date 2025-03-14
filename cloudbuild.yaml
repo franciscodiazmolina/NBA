@@ -1,14 +1,9 @@
 steps:
-  - name: 'ubuntu'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - 'ls -l && ls -l /app && cat requirements.txt'
-
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/$PROJECT_ID/your-image-name', '.']
 
-images: ['gcr.io/$PROJECT_ID/your-image-name']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/your-image-name']
 
-options:
-  defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    args: ['run', 'deploy', 'nba-app', '--image', 'gcr.io/$PROJECT_ID/your-image-name', '--platform', 'managed', '--region', 'us-central1', '--allow-unauthenticated']

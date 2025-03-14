@@ -1,12 +1,9 @@
-from google.colab import drive
-drive.mount('/content/drive')
-
-# Crear archivo requirements.txt en Google Drive
-requirements_path = "/content/drive/MyDrive/requirements.txt"
-
-!pip install
-pyodbc
+flask
+pandas
 pymssql
+pyodbc
 sqlalchemy
-selenium
 webdriver-manager
+selenium
+requests
+google-cloud-storage
